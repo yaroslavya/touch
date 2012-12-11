@@ -9,6 +9,8 @@
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
   <script src="http://code.jquery.com/qunit/qunit-1.10.0.js"></script>
+  <script src="../lib/knockout-2.2.0.debug.js"></script>
+
   <script src="../src/knockout.touch.js"></script>
   <script>
       test("a basic test example", function () {
@@ -20,10 +22,7 @@
       test("a basic test example", function () {
           ok(true, "this test is fine");
       });
-      test("a basic test example 2", function () {
-          ok(false, "this test will fail");
-      });
-
+      
       module("group b");
       test("a basic test example 3", function () {
           ok(true, "this test is fine");
