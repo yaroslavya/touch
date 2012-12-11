@@ -1,5 +1,0 @@
-C:\Programming\github\yaroslavya\touch\ko.touch\bin\ko.touch.dll
-C:\Programming\github\yaroslavya\touch\ko.touch\bin\ko.touch.pdb
-C:\Programming\github\yaroslavya\touch\ko.touch\obj\Debug\ko.touch.csprojResolveAssemblyReference.cache
-C:\Programming\github\yaroslavya\touch\ko.touch\obj\Debug\ko.touch.dll
-C:\Programming\github\yaroslavya\touch\ko.touch\obj\Debug\ko.touch.pdb
