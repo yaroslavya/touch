@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit basic example</title>
+  <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.10.0.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="http://code.jquery.com/qunit/qunit-1.10.0.js"></script>
+  <script src="../src/knockout.touch.js"></script>
+  <script>
+      test("a basic test example", function () {
+          var value = "hello";
+          equal(value, "hello", "We expect value to be hello");
+      });
+      
+      module("group a");
+      test("a basic test example", function () {
+          ok(true, "this test is fine");
+      });
+      test("a basic test example 2", function () {
+          ok(false, "this test will fail");
+      });
+
+      module("group b");
+      test("a basic test example 3", function () {
+          ok(true, "this test is fine");
+      });
+      test("a basic test example 4", function () {
+          ok(true, "this test is fine");
+      });
+  </script>
+</body>
+</html>
