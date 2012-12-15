@@ -14,8 +14,14 @@
 
     ko.bindingHandlers.tap = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            // This will be called when the binding is first applied to an element
-            // Set up any initial state, event handlers, etc. here
+            var handler = ko.utils.unwrapObservable(valueAccessor());            
+            $(element).hammer({
+                    prevent_default: false,
+                    drag_vertical: false
+            })
+            .bind("tap", function (ev) {
+                handler(ev);                
+            });
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             //something like react on tap and provide a tap handler, with tap event arguements.
