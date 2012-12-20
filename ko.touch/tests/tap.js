@@ -26,7 +26,7 @@ test("swipe binding test", function () {
             equal(model.wasCalled, true, "Is true after swipe");
         }
     };
-    div.innerHTML = "<button data-bind='swipe:doCall'>tap</button>";
+    div.innerHTML = "<button data-bind='swipe:doCall'>swipe</button>";
     ko.applyBindings(model, div);
 
     ko.utils.triggerEvent(div.childNodes[0], "swipe");
@@ -44,7 +44,7 @@ test("drag binding test", function () {
             equal(model.wasCalled, true, "Is true after drag");
         }
     };
-    div.innerHTML = "<button data-bind='drag:doCall'>tap</button>";
+    div.innerHTML = "<button data-bind='drag:doCall'>drag</button>";
     ko.applyBindings(model, div);
 
     ko.utils.triggerEvent(div.childNodes[0], "drag");
@@ -62,7 +62,7 @@ test("transform binding test", function () {
             equal(model.wasCalled, true, "Is true after transform");
         }
     };
-    div.innerHTML = "<button data-bind='transform:doCall'>tap</button>";
+    div.innerHTML = "<button data-bind='transform:doCall'>transform</button>";
     ko.applyBindings(model, div);
 
     ko.utils.triggerEvent(div.childNodes[0], "transform");
@@ -116,7 +116,7 @@ test("release binding test", function () {
             equal(model.wasCalled, true, "Is true after release");
         }
     };
-    div.innerHTML = "<button data-bind='release:doCall'>tap</button>";
+    div.innerHTML = "<button data-bind='release:doCall'>release</button>";
     ko.applyBindings(model, div);
 
     ko.utils.triggerEvent(div.childNodes[0], "release");
