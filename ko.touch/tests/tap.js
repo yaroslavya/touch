@@ -3,19 +3,17 @@ test("tap binding test", function () {
     var div = document.getElementById("tapDiv");
     var model = {
         wasCalled: false,
-        doCall: function (arg1) {            
+        doCall: function (arg1) {
             equal(model.wasCalled, false, "Is false before tap");
             model.wasCalled = true;
             equal(model.wasCalled, true, "Is true after tap");
         }
-    };    
+    };
+    
+    div.innerHTML = "<button data-bind='tap:doCall'>tap</button>";
     ko.applyBindings(model, div);
-    
-    $("#tapDiv").trigger("tap");
-    $("#tapDiv").trigger("click");
-    //ko.utils.triggerEvent(div, ev);
-    //ko.utils.triggerEvent(div.childNodes[0], ev);
-    
+        
+    ko.utils.triggerEvent(div.childNodes[0], "tap");
     
     equal(model.wasCalled, true, "We expect tap was called");
 });
@@ -34,7 +32,7 @@ test("swipe binding test", function () {
     ko.applyBindings(model, div);
 
     ko.utils.triggerEvent(div.childNodes[0], "swipe");
-    equal(model.wasCalled, true, "We expect tap was called");
+    equal(model.wasCalled, true, "We expect swipe was called");
 });
 
 test("drag binding test", function () {
@@ -48,15 +46,10 @@ test("drag binding test", function () {
         }
     };
     div.innerHTML = "<button data-bind='drag:doCall'>drag</button>";
-    ko.applyBindings(model, div);
-    
-    var hammer = new Hammer(div.childNodes[0]);
-    hammer.ontap = function (ev) {
-        argDebug = ev;
-    };
+    ko.applyBindings(model, div);        
 
     ko.utils.triggerEvent(div.childNodes[0], "drag");
-    equal(model.wasCalled, true, "We expect tap was called");
+    equal(model.wasCalled, true, "We expect drag was called");
 });
 
 test("transform binding test", function () {

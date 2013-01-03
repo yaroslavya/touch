@@ -51,10 +51,7 @@
                     handler(ev);
                 });
         },
-        update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            //something like react on tap and provide a tap handler, with tap event arguements.
-            //currently I can use something like hammer to track the gestures. 
-            //Later I can write my own implementation. I checked hammer, not that complicated.
+        update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {            
         }
     };
 
@@ -69,9 +66,7 @@
                 });
         },
         update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            //something like react on tap and provide a tap handler, with tap event arguements.
-            //currently I can use something like hammer to track the gestures. 
-            //Later I can write my own implementation. I checked hammer, not that complicated.
+            
         }
     };
 
@@ -86,9 +81,7 @@
             });
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            //something like react on tap and provide a tap handler, with tap event arguements.
-            //currently I can use something like hammer to track the gestures. 
-            //Later I can write my own implementation. I checked hammer, not that complicated.
+            
         }
     };
     
@@ -103,9 +96,7 @@
             });
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            //something like react on tap and provide a tap handler, with tap event arguements.
-            //currently I can use something like hammer to track the gestures. 
-            //Later I can write my own implementation. I checked hammer, not that complicated.
+            
         }
     };
     
@@ -120,9 +111,7 @@
             });
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            //something like react on tap and provide a tap handler, with tap event arguements.
-            //currently I can use something like hammer to track the gestures. 
-            //Later I can write my own implementation. I checked hammer, not that complicated.
+            
         }
     };
     
@@ -137,9 +126,7 @@
             });
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            //something like react on tap and provide a tap handler, with tap event arguements.
-            //currently I can use something like hammer to track the gestures. 
-            //Later I can write my own implementation. I checked hammer, not that complicated.
+           
         }
     };
     

@@ -46,6 +46,11 @@
     <Content Include="lib\knockout-2.2.0.debug.js" />
     <Content Include="lib\knockout-2.2.0.js" />
     <Content Include="tests\clickBinding.js" />
+    <Content Include="tests\img\abcmask.png" />
+    <Content Include="tests\img\aslider.png" />
+    <Content Include="tests\img\bslider.png" />
+    <Content Include="tests\img\cslider.png" />
+    <Content Include="tests\img\texture.jpg" />
     <Content Include="tests\SimpleDemo.html" />
     <Content Include="tests\tap.js" />
     <Content Include="tests\test_runner.html" />
