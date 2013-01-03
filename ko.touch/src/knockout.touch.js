@@ -18,25 +18,15 @@
         init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var handler = ko.utils.unwrapObservable(valueAccessor());
             
-            var hammer = new Hammer(element);
-            hammer.ontap = function (ev) {
-                argDebug = ev;
-                handler(ev);
-            };
-
-//            $(element).hammer({
-//                prevent_default: false,
-//                transform_vertical: false
-//            })
-//                .bind("tap", function (ev) {
-//                    argDebug = ev;
-//                    handler(ev);
-//                });
+            $(element).hammer({
+                prevent_default: false,
+                transform_vertical: false
+            })
+            .bind("tap", function (ev) {
+                    handler(ev);
+            });
         },
-        update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            //something like react on tap and provide a tap handler, with tap event arguements.
-            //currently I can use something like hammer to track the gestures. 
-            //Later I can write my own implementation. I checked hammer, not that complicated.
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {            
         }
     };
 
