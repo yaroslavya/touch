@@ -46,6 +46,7 @@
     <Content Include="lib\knockout-2.2.0.debug.js" />
     <Content Include="lib\knockout-2.2.0.js" />
     <Content Include="tests\clickBinding.js" />
+    <Content Include="tests\SimpleDemo.html" />
     <Content Include="tests\tap.js" />
     <Content Include="tests\test_runner.html" />
   </ItemGroup>

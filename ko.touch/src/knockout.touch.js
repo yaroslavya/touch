@@ -3,7 +3,7 @@
     if (typeof (ko) === "undefined") {
         throw "knockout is required for knockout.touch";
     }
-
+    
     ko.bindingHandlers['invisible'] = {
         update: function (element, valueAccessor) {
             var newValueAccessor = function () {
@@ -17,13 +17,21 @@
     ko.bindingHandlers.tap = {
         init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var handler = ko.utils.unwrapObservable(valueAccessor());
-            $(element).hammer({
-                prevent_default: false,
-                transform_vertical: false
-            })
-                .bind("tap", function(ev) {
-                    handler(ev);
-                });
+            
+            var hammer = new Hammer(element);
+            hammer.ontap = function (ev) {
+                argDebug = ev;
+                handler(ev);
+            };
+
+//            $(element).hammer({
+//                prevent_default: false,
+//                transform_vertical: false
+//            })
+//                .bind("tap", function (ev) {
+//                    argDebug = ev;
+//                    handler(ev);
+//                });
         },
         update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             //something like react on tap and provide a tap handler, with tap event arguements.

@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="../lib/knockout-2.2.0.debug.js"></script>
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="https://raw.github.com/EightMedia/hammer.js/master/hammer.js"></script>
+  <script src="https://raw.github.com/EightMedia/hammer.js/master/jquery.hammer.js"></script>
+    
+  <script src="../src/knockout.touch.js"></script>    
+
+    <style>
+	/* a few initial styles for our containing elements */
+	body {background:#282828 url(img/texture.jpg);}
+	#wrap {width:300px; height:300px; position:relative; overflow:hidden; margin:3em auto;}
+	#blocks {width:300px; height:300px;  position:absolute; top:0; left:0; overflow:hidden;}
+	
+	/* our "mask" image positions over top of the animated blocks */
+	.mask {position:absolute; top:118px; left:0; z-index:500; background-image: url("img/abcmask.png"); width: 269px; height: 160px;}
+	
+	/*shared styles and animation definitions for all of our animated blocks*/
+	.col {
+		width:72px;
+		height:144px;
+		position:absolute;
+		top:10px;
+		-webkit-transition: all 225ms cubic-bezier(0.545, 0.165, 0.835, 0.425); 
+		   -moz-transition: all 225ms cubic-bezier(0.545, 0.165, 0.835, 0.425); 
+		    -ms-transition: all 225ms cubic-bezier(0.545, 0.165, 0.835, 0.425); 
+		     -o-transition: all 225ms cubic-bezier(0.545, 0.165, 0.835, 0.425); 
+		        transition: all 225ms cubic-bezier(0.545, 0.165, 0.835, 0.425); /* custom */
+	} 
+	
+	/* specific images and top positions for each of our blocks */
+	.col1 {background: url(img/aslider.png); top:22px; left:26px;}
+	.col2 {background:url(img/bslider.png); top:4px; left: 100px;}
+	.col3 {background:url(img/cslider.png); top:30px; left:174px;}
+
+	/* the class we'll toggle with jQuery to trigger our transitions */
+	.col-anim {top:96px;}
+
+</style>
+
+<script>
+
+    // assign toggle the col-anim class for each of our columns when they are clicked
+    $(function () {
+        var model = {
+            slide: function (ev) {
+                if (ev.direction == "down") {
+                    var target = $(ev.currentTarget);
+                    target.addClass("col-anim");
+                }
+            },
+            extract:function(ev) {
+                if (ev.direction == "up") {
+                    if (ev.position.x > 26 && ev.position.x < 98) {
+                        $(".col1").removeClass("col-anim");
+                    }
+                    else if (ev.position.x > 100 && ev.position.x < 172) {
+                        $(".col2").removeClass("col-anim");
+                    }
+                    else if (ev.position.x > 174 && ev.position.x < 246) {
+                        $(".col3").removeClass("col-anim");
+                    }
+                }
+            }
+        };
+
+        ko.applyBindings(model);        
+    });
+
+</script>
+
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="mask" data-bind="drag:extract"    ></div>
+		<div id="blocks">
+			<div class="col col1" data-bind="drag:slide" ></div>
+			<div class="col col2" data-bind="drag:slide" ></div>
+			<div class="col col3" data-bind="drag:slide" ></div>
+		</div>
+	</div>
+</body>
+</html>
