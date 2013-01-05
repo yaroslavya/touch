@@ -42,6 +42,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\animate.css" />
+    <Content Include="lib\jquery-1.8.3.min.js" />
+    <Content Include="samples\shaker.html" />
     <Content Include="src\knockout.touch.js" />
     <Content Include="lib\knockout-2.2.0.debug.js" />
     <Content Include="lib\knockout-2.2.0.js" />
