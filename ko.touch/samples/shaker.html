@@ -12,23 +12,61 @@
     <script src="../src/knockout.touch.js"></script>
     <!-- this is our cheat to get all the effects-->
     <link href="../lib/animate.css" rel="stylesheet" />
-    <link href="../Content/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        div#wrapper
-        {
-            padding: 100px 0px;
-            text-align: center;
-        }
-    </style>
+    <link href="../Content/bootstrap.min.css" rel="stylesheet" />    
+    
+    <link href="shaker.css" rel="stylesheet" />
     <script>
         $(function () {
             var model = function () {
+                this.state = ko.observable('initial');
+                this.lastev = ko.observable({});
+                this.updateState = function (animation) {
+                    var ev = lastev();
+                    if (ev !== undefined && ev.distance !== undefined)
+                        state(animation + ev.distance+ ' '+ ev.position.x);
+                };
+
+                this.resetState = function () {
+                    state('initial');
+                };
+                
+                this.animate = function (animation) {
+                    updateState(animation);
+                    
+                    var prefix = 'btn btn-large btn-info animated ';
+                    $('#animateTest').removeClass().addClass(prefix + animation);
+                    
+                    if (animation === 'bounce') return;
+                    
+                    var wait = window.setTimeout(function () {
+                        $('#animateTest').removeClass().addClass(prefix);
+                        resetState();
+                    },
+                        1300
+                    );
+                };
+
+                this.rightSwipeHandler = function (ev) {
+                    lastev(ev);
+                    
+                    if (ev.distance <= 50)
+                        animate('shake');
+                    
+                    if (ev.distance > 50 && ev.distance < 85)
+                        animate('wobble');
+                    
+                    if(ev.distance >=85)
+                        animate('bounceOutRight');
+                };
+                
                 this.flash = function (ev) {
+                    lastev(ev);
                     animate('flash');
                 };
                 this.swipe = function (ev) {
+                    lastev(ev);
                     if (ev.direction === 'right')
-                        animate('lightSpeedOut');
+                        rightSwipeHandler(ev);
 
                     if (ev.direction === 'left')
                         animate('lightSpeedIn');
@@ -37,35 +75,27 @@
                         animate('hinge');
 
                     if (ev.direction === 'up')
-                        animate('rotateInUpRight');
+                        animate('bounce');
                 };
 
                 return {
                     flash: flash,
-                    swipe: swipe
+                    swipe: swipe,
+                    state: state
                 };
             }();
 
             ko.applyBindings(model);
-        });
-
-        function animate(animation) {
-            var prefix = 'btn btn-large animated ';
-            $('#animateTest').removeClass().addClass(prefix + animation);
-            var wait = window.setTimeout(function () {
-                $('#animateTest').removeClass().addClass(prefix);
-            },
-                1300
-            );
-        }
+        });        
     </script>
 
 </head>
-<body>
-    <div id="wrapper">
-        <div class="btn-group">
-            <div id="animateTest" class="btn btn-large" data-bind="tap:flash, swipe:swipe">flash me</div>
+    <body>
+        <div id="curr" class="alert-info" data-bind="text:state"></div>
+        <div id="wrapper">
+            <div class="btn-group">
+                <div id="animateTest" class="btn btn-large btn-info" data-bind="swipe:swipe">Shake me</div>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
