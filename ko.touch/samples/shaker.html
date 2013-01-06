@@ -11,42 +11,61 @@
     <script src="../lib/knockout-2.2.0.js"></script>
     <script src="../src/knockout.touch.js"></script>
     <!-- this is our cheat to get all the effects-->
-    <link href="../lib/animate.css" rel="stylesheet" />    
-
+    <link href="../lib/animate.css" rel="stylesheet" />
+    <link href="../Content/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        div#wrapper
+        {
+            padding: 100px 0px;
+            text-align: center;
+        }
+    </style>
     <script>
-        var model = {
-            flash: function (ev) {                
-                //$('#animateTest').addClass("animated flash");
-                animate('flash');
-            }
-        };
-        $(function() {
+        $(function () {
+            var model = function () {
+                this.flash = function (ev) {
+                    animate('flash');
+                };
+                this.swipe = function (ev) {
+                    if (ev.direction === 'right')
+                        animate('lightSpeedOut');
+
+                    if (ev.direction === 'left')
+                        animate('lightSpeedIn');
+
+                    if (ev.direction === 'down')
+                        animate('hinge');
+
+                    if (ev.direction === 'up')
+                        animate('rotateInUpRight');
+                };
+
+                return {
+                    flash: flash,
+                    swipe: swipe
+                };
+            }();
+
             ko.applyBindings(model);
         });
-        
+
         function animate(animation) {
-            $('#animateTest').removeClass().addClass(animation);
+            var prefix = 'btn btn-large animated ';
+            $('#animateTest').removeClass().addClass(prefix + animation);
             var wait = window.setTimeout(function () {
-                $('#animateTest').removeClass();
+                $('#animateTest').removeClass().addClass(prefix);
             },
                 1300
             );
         }
-
-        $(document).ready(function () {
-            $('a[data-test]').click(function () {
-                console.log('clicked');
-                var anim = $(this).attr('data-test');
-                animate(anim);
-            });
-        });
     </script>
-   
+
 </head>
-    <body >
-        <div class="animated">
-        <div id="animateTest" data-bind="tap:flash" >flash me</div><br />
-        <a data-test="animated flash">flash</a>
-            </div>
-    </body>
+<body>
+    <div id="wrapper">
+        <div class="btn-group">
+            <div id="animateTest" class="btn btn-large" data-bind="tap:flash, swipe:swipe">flash me</div>
+        </div>
+    </div>
+</body>
 </html>
