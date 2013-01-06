@@ -60,6 +60,36 @@
         }
     };
 
+    ko.bindingHandlers.dragstart = {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var handler = ko.utils.unwrapObservable(valueAccessor());
+            $(element).hammer({
+                prevent_default: true
+            })
+                .bind("dragstart", function (ev) {
+                    handler(ev);
+                });
+        },
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+
+        }
+    };
+
+    ko.bindingHandlers.dragend = {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var handler = ko.utils.unwrapObservable(valueAccessor());
+            $(element).hammer({
+                prevent_default: true
+            })
+                .bind("dragend", function (ev) {
+                    handler(ev);
+                });
+        },
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+
+        }
+    };
+
     ko.bindingHandlers.transform = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var handler = ko.utils.unwrapObservable(valueAccessor());
