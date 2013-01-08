@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script src="../lib/knockout-2.2.0.debug.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="https://raw.github.com/EightMedia/hammer.js/master/hammer.js"></script>
+    <script src="https://raw.github.com/EightMedia/hammer.js/master/jquery.hammer.js"></script>
+
+    <script src="../src/knockout.touch.js"></script>
+
+    <style>
+        #ribbon {
+            width: 256px;
+            height: 768px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            #ribbon ul {
+                position: absolute;
+                width: 256px;
+                height: 15000px;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+
+        .lister {
+            margin-top: 0px;
+        }
+    </style>
+</head>
+<body style="background-color: black">
+    <div class="lister" id="ribbon" data-bind="drag:scroll,dragstart:slideStart">
+        <ul class="lister" id="list">
+        </ul>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+
+    (function () {
+        var heroes = [
+           { name: "Skilet", url: "images/Avatar17.jpg", properties: "110" },
+           { name: "Diablo 3", url: "images/Avatar2.jpg", properties: "Game" },
+           { name: "Demon", url: "images/Avatar3.jpg", properties: "24500" },
+           { name: "Dwarf", url: "images/Avatar4.jpg", properties: "1100" },
+           { name: "Red demon", url: "images/Avatar5.jpg", properties: "768" },
+           { name: "Archangel", url: "images/Avatar6.jpg", properties: "Impasebru power 100500" },
+           { name: "Mephistopheles", url: "images/Avatar7.jpg", properties: "100500" },
+           { name: "Devil", url: "images/Avatar8.jpg", properties: "infinity" },
+           { name: "Old dwarf", url: "images/Avatar10.jpg", properties: "2200" },
+           { name: "Mary", url: "images/Avatar12.jpg", properties: "9999" },
+           { name: "Iceguard", url: "images/Avatar13.jpg", properties: "333" },
+           { name: "demon bull", url: "images/Avatar14.jpg", properties: "666" },
+           { name: "Warior", url: "images/Avatar15.jpg", properties: "7777" },
+           { name: "Angel", url: "images/Avatar16.jpg", properties: "Power 1000" },
+           { name: "Skilet", url: "images/Avatar17.jpg", properties: "110" },
+           { name: "Diablo 3", url: "images/Avatar2.jpg", properties: "Game" },
+           { name: "Demon", url: "images/Avatar3.jpg", properties: "24500" },
+           { name: "Dwarf", url: "images/Avatar4.jpg", properties: "1100" },
+           { name: "Red demon", url: "images/Avatar5.jpg", properties: "768" },
+           { name: "Archangel", url: "images/Avatar6.jpg", properties: "Impasebru power 100500" },
+           { name: "Mephistopheles", url: "images/Avatar7.jpg", properties: "100500" },
+           { name: "Devil", url: "images/Avatar8.jpg", properties: "infinity" },
+           { name: "Old dwarf", url: "images/Avatar10.jpg", properties: "2200" },
+           { name: "Mary", url: "images/Avatar12.jpg", properties: "9999" },
+           { name: "Iceguard", url: "images/Avatar13.jpg", properties: "333" },
+           { name: "demon bull", url: "images/Avatar14.jpg", properties: "666" },
+           { name: "Warior", url: "images/Avatar15.jpg", properties: "7777" },
+           { name: "Angel", url: "images/Avatar16.jpg", properties: "Power 1000" }];
+
+        for (var i = 0; i < heroes.length; i++) {
+            document.getElementById("list").innerHTML += "<li><div data-bind='drag:slide' class='element'><img src='" + heroes[i].url + "' /></div></li>";
+        }
+    }());
+   
+    var ribbon = (function (container) {
+        var container = $(container);
+        var pictures = $(">li", container);
+
+        var getCount = function () {
+            return pictures.length;
+        }
+
+        var getContainer = function () {
+            return container;
+        }
+
+        var getPosition = function () {
+            return parseInt(ribbon.getContainer().css("margin-top").replace("px", ""), 10);
+        }
+
+        var css = function (value) {
+            ribbon.getContainer().css(value);
+        }
+
+        return {
+            getCount: getCount,
+            getContainer: getContainer,
+            getPosition: getPosition,
+            css: css,
+        }
+    })("#ribbon ul");
+
+    var model = (function () {
+        var imgHeight = 128;
+        var imgWidth = 128;
+        var position = 0;
+        var visibleCount = 6;
+        var curentShow;
+
+        var slide = function (ev) {
+            if (ev.direction == 'right' && ev.distance > 40) {
+                if (curentShow !== undefined)
+                    $(curentShow).stop().animate({ marginLeft: "0px" }, "fast");
+
+                $(ev.currentTarget).stop().animate({ marginLeft: "87px" }, "medium");
+                curentShow = ev.currentTarget;
+            }
+            if (ev.direction == 'left' && ev.distance > 40) {
+                $(curentShow).stop().animate({ marginLeft: "0px" }, "fast");
+
+                curentShow = undefined;
+            }
+        }
+
+        var scroll = function (ev) {
+            var left = 0;
+            var margin = 0;
+
+            if (ev.direction == 'up')
+                left -= ev.distance;
+            else if (ev.direction == 'down')
+                left += ev.distance;
+
+            if ((position + left) < -(ribbon.getCount() - visibleCount) * imgWidth)
+                margin = -(ribbon.getCount() - visibleCount) * imgWidth;
+            else if ((position + left) > 0)
+                margin = 0;
+            else
+                margin = position + left;
+
+            ribbon.css({ marginTop: margin });
+        }
+
+        var slideStart = function (ev) {
+            position = ribbon.getPosition();
+        }
+
+        var showInfo = function (ev) {
+            var target = $(ev.currentTarget);
+            document.getElementById("logo").setAttribute("src", target[0].children[0].src);
+        }
+
+        return {
+            slide: slide,
+            slideStart: slideStart,
+            showInfo: showInfo,
+            scroll: scroll
+        };
+    })();
+
+    ko.applyBindings(model);
+
+
+
+</script>
