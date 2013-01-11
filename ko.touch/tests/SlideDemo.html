@@ -7,7 +7,6 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
     <script src="https://raw.github.com/EightMedia/hammer.js/master/hammer.js"></script>
-    <script src="https://raw.github.com/EightMedia/hammer.js/master/jquery.hammer.js"></script>
 
     <script src="../src/knockout.touch.js"></script>
 
@@ -34,7 +33,7 @@
     </style>
 </head>
 <body style="background-color: black">
-    <div class="lister" id="ribbon" data-bind="drag:scroll,dragstart:slideStart">
+    <div class="lister" id="ribbon" data-bind="drag:scroll, dragend:scrollEnd, swipe:scrollEnd">
         <ul class="lister" id="list">
         </ul>
     </div>
@@ -74,10 +73,10 @@
            { name: "Angel", url: "images/Avatar16.jpg", properties: "Power 1000" }];
 
         for (var i = 0; i < heroes.length; i++) {
-            document.getElementById("list").innerHTML += "<li><div data-bind='drag:slide' class='element'><img src='" + heroes[i].url + "' /></div></li>";
+            document.getElementById("list").innerHTML += "<li><img data-bind='drag:slide' src='" + heroes[i].url + "' /></li>";
         }
     }());
-   
+
     var ribbon = (function (container) {
         var container = $(container);
         var pictures = $(">li", container);
@@ -86,24 +85,15 @@
             return pictures.length;
         }
 
-        var getContainer = function () {
-            return container;
-        }
-
-        var getPosition = function () {
-            return parseInt(ribbon.getContainer().css("margin-top").replace("px", ""), 10);
-        }
-
         var css = function (value) {
-            ribbon.getContainer().css(value);
+            container.css(value);
         }
 
         return {
             getCount: getCount,
-            getContainer: getContainer,
-            getPosition: getPosition,
             css: css,
         }
+
     })("#ribbon ul");
 
     var model = (function () {
@@ -112,25 +102,10 @@
         var position = 0;
         var visibleCount = 6;
         var curentShow;
-
-        var slide = function (ev) {
-            if (ev.direction == 'right' && ev.distance > 40) {
-                if (curentShow !== undefined)
-                    $(curentShow).stop().animate({ marginLeft: "0px" }, "fast");
-
-                $(ev.currentTarget).stop().animate({ marginLeft: "87px" }, "medium");
-                curentShow = ev.currentTarget;
-            }
-            if (ev.direction == 'left' && ev.distance > 40) {
-                $(curentShow).stop().animate({ marginLeft: "0px" }, "fast");
-
-                curentShow = undefined;
-            }
-        }
+        var margin = 0;
 
         var scroll = function (ev) {
             var left = 0;
-            var margin = 0;
 
             if (ev.direction == 'up')
                 left -= ev.distance;
@@ -147,25 +122,31 @@
             ribbon.css({ marginTop: margin });
         }
 
-        var slideStart = function (ev) {
-            position = ribbon.getPosition();
+        var scrollEnd = function (ev) {
+            position = margin;
         }
 
-        var showInfo = function (ev) {
-            var target = $(ev.currentTarget);
-            document.getElementById("logo").setAttribute("src", target[0].children[0].src);
+        var slide = function (ev) {
+            if (ev.direction == 'right' && ev.distance > 40) {
+                if (curentShow !== undefined)
+                    $(curentShow).stop().animate({ marginLeft: "0px" }, "fast");
+
+                $(ev.currentTarget).stop().animate({ marginLeft: "87px" }, "medium");
+                curentShow = ev.currentTarget;
+            }
+            if (ev.direction == 'left' && ev.distance > 40) {
+                $(curentShow).stop().animate({ marginLeft: "0px" }, "fast");
+
+                curentShow = undefined;
+            }
         }
 
         return {
             slide: slide,
-            slideStart: slideStart,
-            showInfo: showInfo,
-            scroll: scroll
+            scroll: scroll,
+            scrollEnd: scrollEnd
         };
     })();
 
     ko.applyBindings(model);
-
-
-
 </script>
