@@ -1,4 +1,4 @@
-﻿/// <reference path="lib/knockout-2.2.0.debug.js" />
+/// <reference path="lib/knockout-2.2.0.debug.js" />
 (function (ko, undefined) {       
 
     if (typeof (ko) === "undefined") {
@@ -9,7 +9,7 @@
     var interceptEvent =  {
         bindHandler: function (element, event, handler) {
 
-            var hammer = new Hammer(element,options);
+            var hammer = new Hammer(element);
             hammer["on" + event] = function (ev) {
                 ev = unifyArguments(ev);
                 handler(ev);
