@@ -218,8 +218,9 @@
             ev.button = 0;
             ev.relatedTarget = null;
             element.fireEvent('on' + eventType, ev);
+        } else {
+            throw "browser not support trigger events";
         }
-
-    }
+    };
 
 }(window.ko);
