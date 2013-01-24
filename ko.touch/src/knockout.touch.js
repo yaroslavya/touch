@@ -11,10 +11,27 @@
     'use strict';
 
     var _has_touch = 'ontouchstart' in document,
-        interceptEvent,
-        handler, eventList,
-        gestures, i;
+        _eventList = null,
+        _gesture = null,
+        _element = {},
+        _mousdown = false,
+        _can_tap = false,
+        _pos = {},
+        _first = false,
+        _fingers = 0,
+        _distance = 0;
 
+    function reset() {
+        _first = false;
+        _pos = {};
+        _fingers = 0;
+        _distance = 0;
+        _gesture = null;
+    }
+
+    function setup() {
+        _first = true;
+    }
 
     function isFunction(obj) {
         return Object.prototype.toString.call(obj) == '[object Function]';
@@ -35,27 +52,45 @@
         }
     }
 
-    gestures = {
+    var gestures = {
+        hold: function (event) {
+            _gesture = 'hold';
+        },
+        swipe: function (event) {
+            _gesture = 'swipe';
+        },
+        drag: function (event) {
+            _gesture = 'drag';
+
+            event.testField = 'TestValue';
+            //IE fix
+            triggerTouchEvent(_element, 'drag', event);
+        },
+        transform: function (event) {
+        },
         tap: function tap(event) {
+            _gesture = 'tap';
             //need for test
             event.testField = 'TestValue';
             //IE fix
             var target = event.target || event.srcElement;
-            triggerTouchEvent(target, 'tap', event);
+            triggerTouchEvent(_element, 'tap', event);
+            
         }
     }
 
-    function handleEvents(event) {
+    this.handleEvents = function handleEvents(event) {
         //IE fix
         event = event || window.event;
         switch (event.type) {
             case 'mousedown':
             case 'touchstart':
-                gestures.tap(event);
+
                 break;
 
             case 'mousemove':
             case 'touchmove':
+                gestures.drag(event);
 
                 break;
 
@@ -63,25 +98,36 @@
             case 'mouseout':
             case 'touchcancel':
             case 'touchend':
+                _mousdown = false;
 
+                //gestures.swipe(event);
+
+                if (_gesture == 'drag') {
+                    triggerTouchEvent(_element, 'dragend', event);
+                } else {
+                    gestures.tap(event);
+                }
+
+                reset();
                 break;
         }
     }
 
     //needs renaming interceptEvent,touchOptions
-    interceptEvent = {
-        bindHandler: function (elem, eventType, handler) {
-            elem['on' + eventType] = handler;
+    this.interceptEvent = {
+        bindHandler: function (element, eventType, handler) {
+            _element = element;
+            _element['on' + eventType] = handler;
 
             if (_has_touch) {
-                eventList = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
+                _eventList = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
             }
                 // for non-touch
             else {
-                eventList = ['mouseup', 'mousedown', 'mousemove', 'mouseout'];
+                _eventList = ['mouseup', 'mousedown', 'mousemove', 'mouseout'];
             }
-            for (i = 0; i < eventList.length; i++) {
-                addEvent(elem, eventList[i], handleEvents);
+            for (var i = 0; i < _eventList.length; i++) {
+                addEvent(_element, _eventList[i], handleEvents);
             }
 
 
@@ -100,7 +146,7 @@
 
     ko.bindingHandlers.tap = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "tap", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -109,7 +155,7 @@
 
     ko.bindingHandlers.swipe = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "swipe", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -118,7 +164,7 @@
 
     ko.bindingHandlers.drag = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "drag", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -128,7 +174,7 @@
 
     ko.bindingHandlers.dragstart = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "dragstart", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -138,7 +184,7 @@
 
     ko.bindingHandlers.dragend = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "dragend", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -148,7 +194,7 @@
 
     ko.bindingHandlers.transform = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "transform", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -158,7 +204,7 @@
 
     ko.bindingHandlers.hold = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "hold", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -168,7 +214,7 @@
 
     ko.bindingHandlers.doubletap = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "doubletap", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -178,7 +224,7 @@
 
     ko.bindingHandlers.release = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            handler = ko.utils.unwrapObservable(valueAccessor());
+            var handler = ko.utils.unwrapObservable(valueAccessor());
             interceptEvent.bindHandler(element, "release", handler);
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
