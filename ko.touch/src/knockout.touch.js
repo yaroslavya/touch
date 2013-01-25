@@ -252,17 +252,17 @@
         }
         else if (document.createEventObject) {
             var ev = document.createEventObject();
-            ev.detail = 0;
-            ev.screenX = 12;
-            ev.screenY = 345;
-            ev.clientX = 7;
-            ev.clientY = 220;
-            ev.ctrlKey = false;
-            ev.altKey = false;
-            ev.shiftKey = true;
-            ev.metaKey = false;
-            ev.button = 0;
-            ev.relatedTarget = null;
+            ev.detail   	 = detail;
+            ev.screenX  	 = screenX;
+            ev.screenY  	 = screenY;
+            ev.clientX  	 = clientX;
+            ev.clientY  	 = clientY;
+            ev.ctrlKey  	 = ctrlKey;
+            ev.altKey   	 = altKey;
+            ev.shiftKey 	 = shiftKey;
+            ev.metaKey  	 = metaKey;
+            ev.button        = button;
+            ev.relatedTarget = relatedTarget;
             element.fireEvent('on' + eventType, ev);
         } else {
             throw "browser not support trigger events";
