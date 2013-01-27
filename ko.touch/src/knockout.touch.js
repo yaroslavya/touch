@@ -1,36 +1,35 @@
 ﻿/// <reference path="lib/knockout-2.2.0.debug.js" />
-!function (ko, undefined) {
+;(function (ko, undefined) {
     if (typeof (ko) === "undefined") {
         throw "knockout is required for knockout.touch";
     }
-    /*this равна undefined после использования 'use strict'; 
-    *можно использовать standard self-executing anonymous function
-    *но я не уверен что это хороший подход 
-    */
-    var _this = this;
+
+    var self = this;
     'use strict';
 
-    var _has_touch = 'ontouchstart' in document,
-        _eventList = null,
-        _gesture = null,
-        _element = {},
-        _mousdown = false,
-        _can_tap = false,
-        _pos = {},
-        _first = false,
-        _fingers = 0,
-        _distance = 0;
+    var supportTouch = 'ontouchstart' in document,
+        eventList = null,
+        gesture   = null
+        element   = {},
+        mousdown  = false,
+        canTap    = false,
+        pos       = {},
+        first     = false,
+        fingers   = 0,
+        distance  = 0;
 
     function reset() {
-        _first = false;
-        _pos = {};
-        _fingers = 0;
-        _distance = 0;
-        _gesture = null;
+        first     = false;
+        pos       = {};
+        fingers   = 0;
+        distance  = 0;
+        gesture   = null;
     }
 
     function setup() {
-        _first = true;
+        first     = true;
+
+        gestures.hold(event);
     }
 
     function isFunction(obj) {
@@ -54,85 +53,78 @@
 
     var gestures = {
         hold: function (event) {
-            _gesture = 'hold';
+            gesture = 'hold';
         },
         swipe: function (event) {
-            _gesture = 'swipe';
+            gesture = 'swipe';
         },
         drag: function (event) {
-            _gesture = 'drag';
-
+            gesture = 'drag';
+            var target = event.target || event.srcElement;
             event.testField = 'TestValue';
-            //IE fix
-            triggerTouchEvent(_element, 'drag', event);
+            triggerTouchEvent(element, 'drag', event);
         },
         transform: function (event) {
+            gesture = 'transform';
         },
-        tap: function tap(event) {
-            _gesture = 'tap';
-            //need for test
-            event.testField = 'TestValue';
-            //IE fix
+        tap: function (event) {
+            gesture = 'tap';
             var target = event.target || event.srcElement;
-            triggerTouchEvent(_element, 'tap', event);
+            event.testField = 'TestValue';
+            triggerTouchEvent(element, 'tap', event);
             
         }
     }
 
-    this.handleEvents = function handleEvents(event) {
-        //IE fix
+    this.touchStartHandleEvent = function touchStartHandleEvent(event) {
         event = event || window.event;
-        switch (event.type) {
-            case 'mousedown':
-            case 'touchstart':
 
-                break;
+        setup();
 
-            case 'mousemove':
-            case 'touchmove':
-                gestures.drag(event);
-
-                break;
-
-            case 'mouseup':
-            case 'mouseout':
-            case 'touchcancel':
-            case 'touchend':
-                _mousdown = false;
-
-                //gestures.swipe(event);
-
-                if (_gesture == 'drag') {
-                    triggerTouchEvent(_element, 'dragend', event);
-                } else {
-                    gestures.tap(event);
-                }
-
-                reset();
-                break;
-        }
     }
 
-    //needs renaming interceptEvent,touchOptions
+    this.touchMoveHandleEvent = function touchMoveHandleEvent(event) {
+        event = event || window.event;
+
+        gestures.drag(event);
+
+    }
+
+    this.touchEndHandleEvent = function touchEndHandleEvent(event) {
+        event = event || window.event;
+
+        mousdown = false;
+
+        if (gesture == 'drag') {
+            triggerTouchEvent(element, 'dragend', event);
+        } else {
+            gestures.tap(event);
+        }
+
+        reset();
+    }
+
+    //needs renaming interceptEvent
     this.interceptEvent = {
-        bindHandler: function (element, eventType, handler) {
-            _element = element;
-            _element['on' + eventType] = handler;
+        bindHandler: function (elem, eventType, handler) {
+            element = elem;
+            element['on' + eventType] = handler;
 
-            if (_has_touch) {
-                _eventList = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
-            }
-                // for non-touch
-            else {
-                _eventList = ['mouseup', 'mousedown', 'mousemove', 'mouseout'];
-            }
-            for (var i = 0; i < _eventList.length; i++) {
-                addEvent(_element, _eventList[i], handleEvents);
-            }
+            var touchStart = supportTouch ? 'touchstart' : 'mousedown',
+                touchMove = supportTouch ? 'touchmove' : 'mousemove';
+                touchEnd = supportTouch ? 'touchend' : 'mouseup';
+                touchOut = supportTouch ? 'touchcancel' : 'mouseout';
 
-
+            addEvent(element, touchStart, touchStartHandleEvent);
+            addEvent(element, touchMove, touchMoveHandleEvent);
+            addEvent(element, touchEnd, touchEndHandleEvent);
+            addEvent(element, touchOut, touchEndHandleEvent);
         }
     }
+})(window.ko);
+
+;(function (ko, undefined) {
+    var touchEvents = ['tap', 'swipe', 'drag', 'dragstart', 'dragend', 'transform', 'hold', 'doubletap', 'release'];
 
     ko.bindingHandlers['invisible'] = {
         update: function (element, valueAccessor) {
@@ -144,129 +136,51 @@
         }
     };
 
-    ko.bindingHandlers.tap = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "tap", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        }
-    };
-
-    ko.bindingHandlers.swipe = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "swipe", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        }
-    };
-
-    ko.bindingHandlers.drag = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "drag", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.dragstart = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "dragstart", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.dragend = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "dragend", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.transform = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "transform", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.hold = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "hold", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.doubletap = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "doubletap", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.release = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "release", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-}(window.ko);
-
-!function (ko, undefined) {
-    if (typeof (ko) === "undefined") {
-        throw "knockout is required for knockout.triggerTouchEvent";
+    this.bindEventHandler =  function (eventType) {
+        ko.bindingHandlers[eventType] = {
+            init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var handler = ko.utils.unwrapObservable(valueAccessor());
+                interceptEvent.bindHandler(element, eventType, handler);
+            }
+        };
     }
+
+    for (var i = touchEvents.length; i--;) {
+        bindEventHandler(touchEvents[i]);
+    }
+
+})(window.ko);
+
+;(function (ko, undefined) {
     'use strict';
 
     ko.utils.triggerTouchEvent = function triggerTouchEvent(element, eventType, canBubble,
         cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey,
         metaKey, button, relatedTarget) {
-        //check IE
         if (document.createEvent && !top.execScript) {
             var event = document.createEvent('MouseEvents');
             event.initMouseEvent(eventType, canBubble, cancelable, view, detail, screenX, screenY,
                 clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget);
             element.dispatchEvent(event);
         }
+        //for IE
         else if (document.createEventObject) {
-            var ev = document.createEventObject();
-            ev.detail   	 = detail;
-            ev.screenX  	 = screenX;
-            ev.screenY  	 = screenY;
-            ev.clientX  	 = clientX;
-            ev.clientY  	 = clientY;
-            ev.ctrlKey  	 = ctrlKey;
-            ev.altKey   	 = altKey;
-            ev.shiftKey 	 = shiftKey;
-            ev.metaKey  	 = metaKey;
-            ev.button        = button;
-            ev.relatedTarget = relatedTarget;
-            element.fireEvent('on' + eventType, ev);
+            var event = document.createEventObject();
+            event.detail    	= detail;
+            event.screenX   	= screenX;
+            event.screenY  	    = screenY;
+            event.clientX  	    = clientX;
+            event.clientY   	= clientY;
+            event.ctrlKey   	= ctrlKey;
+            event.altKey    	= altKey;
+            event.shiftKey  	= shiftKey;
+            event.metaKey  	    = metaKey;
+            event.button        = button;
+            event.relatedTarget = relatedTarget;
+            element.fireEvent('on' + eventType, event);
         } else {
             throw "browser not support trigger events";
         }
     };
 
-}(window.ko);
+})(window.ko);

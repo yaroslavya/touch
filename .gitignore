@@ -27,3 +27,4 @@ obj/
 [Dd]ebug*/
 [Rr]elease*/
 TestResults/
+.DS_Store
