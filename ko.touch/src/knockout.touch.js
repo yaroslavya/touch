@@ -9,8 +9,9 @@
     */
     var _this = this;
     'use strict';
-
-    var _has_touch = 'ontouchstart' in document,
+    
+    //TODOH: make it a state object.
+    var hasTouch = 'ontouchstart' in document,
         _eventList = null,
         _gesture = null,
         _element = {},
@@ -21,6 +22,7 @@
         _fingers = 0,
         _distance = 0;
 
+    //TODOH: also part fo the state object.
     function reset() {
         _first = false;
         _pos = {};
@@ -33,14 +35,17 @@
         _first = true;
     }
 
+    //TODOH: Move to utils. Also any other helpers can be moved there.
     function isFunction(obj) {
         return Object.prototype.toString.call(obj) == '[object Function]';
     }
 
+    //NOTE: we are checking if we should attach even via all browser attachEvent or via
+    //ie addEventListener.
     function addEvent(obj, type, fn) {
         if (obj.attachEvent) {
-            obj['e' + type + fn] = fn;
-            obj[type + fn] = function () { obj['e' + type + fn](window.event); }
+            obj['e' + type + fn] = fn;//adding handler to the object.
+            obj[type + fn] = function() { obj['e' + type + fn](window.event); }//making addEvent wrapper func to add to object.
             obj.attachEvent('on' + type, obj[type + fn]);
         } else
             obj.addEventListener(type, fn, false);
@@ -61,7 +66,7 @@
         },
         drag: function (event) {
             _gesture = 'drag';
-
+            
             event.testField = 'TestValue';
             //IE fix
             triggerTouchEvent(_element, 'drag', event);
@@ -79,6 +84,8 @@
         }
     }
 
+    //TODOH: move all the logic to event creators. So that every even creator could perform all the calculations
+    //and fill the corresponding even argument. After that event is triggered.
     this.handleEvents = function handleEvents(event) {
         //IE fix
         event = event || window.event;
@@ -119,17 +126,18 @@
             _element = element;
             _element['on' + eventType] = handler;
 
-            if (_has_touch) {
+            if (hasTouch) {
                 _eventList = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
             }
                 // for non-touch
             else {
                 _eventList = ['mouseup', 'mousedown', 'mousemove', 'mouseout'];
             }
+            
+            //addEvent(element, touchstart, handleEvents);//handle events is a function that handles any event depending on event.type.
             for (var i = 0; i < _eventList.length; i++) {
                 addEvent(_element, _eventList[i], handleEvents);
             }
-
 
         }
     }
