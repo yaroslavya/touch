@@ -142,112 +142,6 @@
         }
     }
 
-    ko.bindingHandlers['invisible'] = {
-        update: function (element, valueAccessor) {
-            var newValueAccessor = function () {
-                // just return the opposite of the visible flag!
-                return !ko.utils.unwrapObservable(valueAccessor());
-            };
-            return ko.bindingHandlers.visible.update(element, newValueAccessor);
-        }
-    };
-
-    ko.bindingHandlers.tap = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "tap", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        }
-    };
-
-    ko.bindingHandlers.swipe = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "swipe", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        }
-    };
-
-    ko.bindingHandlers.drag = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "drag", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.dragstart = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "dragstart", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.dragend = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "dragend", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.transform = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "transform", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.hold = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "hold", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.doubletap = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "doubletap", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-    ko.bindingHandlers.release = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var handler = ko.utils.unwrapObservable(valueAccessor());
-            interceptEvent.bindHandler(element, "release", handler);
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        }
-    };
-
-}(window.ko);
-
-!function (ko, undefined) {
-    if (typeof (ko) === "undefined") {
-        throw "knockout is required for knockout.triggerTouchEvent";
-    }
-    'use strict';
-
     ko.utils.triggerTouchEvent = function triggerTouchEvent(element, eventType, canBubble,
         cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey,
         metaKey, button, relatedTarget) {
@@ -260,16 +154,16 @@
         }
         else if (document.createEventObject) {
             var ev = document.createEventObject();
-            ev.detail   	 = detail;
-            ev.screenX  	 = screenX;
-            ev.screenY  	 = screenY;
-            ev.clientX  	 = clientX;
-            ev.clientY  	 = clientY;
-            ev.ctrlKey  	 = ctrlKey;
-            ev.altKey   	 = altKey;
-            ev.shiftKey 	 = shiftKey;
-            ev.metaKey  	 = metaKey;
-            ev.button        = button;
+            ev.detail = detail;
+            ev.screenX = screenX;
+            ev.screenY = screenY;
+            ev.clientX = clientX;
+            ev.clientY = clientY;
+            ev.ctrlKey = ctrlKey;
+            ev.altKey = altKey;
+            ev.shiftKey = shiftKey;
+            ev.metaKey = metaKey;
+            ev.button = button;
             ev.relatedTarget = relatedTarget;
             element.fireEvent('on' + eventType, ev);
         } else {
