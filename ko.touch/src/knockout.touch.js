@@ -10,25 +10,61 @@
     var _this = this;
     'use strict';
     
+    var state = function (document) {
+        var touchEvents = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
+        var mouseEvents = ['mouseup', 'mousedown', 'mousemove', 'mouseout'];
+        
+        this.hasTouch = 'ontouchstart' in document;
+        this.eventList = null;
+        this.gesture = null;
+        this.currElement = {};
+        this.mousedown = false;
+        this.canTap = false;
+        this.pos = {};
+        this.first = false;
+        this.fingers = 0;
+        this.distance = 0;
+
+        this.reset = function() {
+            first = false;
+            pos = {};
+            fingers = 0;
+            distance = 0;
+            gesture = null;
+        };
+
+        this.eventList = function() {
+            if (hasTouch) return touchEvents;
+
+            return mouseEvents;
+        };
+        
+        this.setup = function() {
+            first = true;
+        };
+
+        return this;
+    }(document);
+    
     //TODOH: make it a state object.
     var hasTouch = 'ontouchstart' in document,
-        _eventList = null,
-        _gesture = null,
+        eventList = null,
+        gesture = null,
         _element = {},
-        _mousdown = false,
-        _can_tap = false,
+        mousedown = false,
+        canTap = false,
         _pos = {},
         _first = false,
-        _fingers = 0,
-        _distance = 0;
+        fingers = 0,
+        distance = 0;
 
     //TODOH: also part fo the state object.
     function reset() {
         _first = false;
         _pos = {};
-        _fingers = 0;
-        _distance = 0;
-        _gesture = null;
+        fingers = 0;
+        distance = 0;
+        gesture = null;
     }
 
     function setup() {
@@ -58,31 +94,30 @@
     }
 
     var gestures = {
-        hold: function (event) {
-            _gesture = 'hold';
+        hold: function(event) {
+            state.gesture = 'hold';
         },
-        swipe: function (event) {
-            _gesture = 'swipe';
+        swipe: function(event) {
+            state.gesture = 'swipe';
         },
-        drag: function (event) {
-            _gesture = 'drag';
-            
+        drag: function(event) {
+            state.gesture = 'drag';
+
             event.testField = 'TestValue';
             //IE fix
-            triggerTouchEvent(_element, 'drag', event);
+            triggerTouchEvent(state.currElement, 'drag', event);
         },
-        transform: function (event) {
+        transform: function(event) {
         },
         tap: function tap(event) {
-            _gesture = 'tap';
+            state.gesture = 'tap';
             //need for test
             event.testField = 'TestValue';
             //IE fix
             var target = event.target || event.srcElement;
-            triggerTouchEvent(_element, 'tap', event);
-            
+            triggerTouchEvent(state.currElement, 'tap', event);
         }
-    }
+    };
 
     //TODOH: move all the logic to event creators. So that every even creator could perform all the calculations
     //and fill the corresponding even argument. After that event is triggered.
@@ -90,55 +125,46 @@
         //IE fix
         event = event || window.event;
         switch (event.type) {
-            case 'mousedown':
-            case 'touchstart':
+        case 'mousedown':
+        case 'touchstart':
+            break;
+        case 'mousemove':
+        case 'touchmove':
+            gestures.drag(event);
 
-                break;
+            break;
+        case 'mouseup':
+        case 'mouseout':
+        case 'touchcancel':
+        case 'touchend':
+            mousedown = false;
 
-            case 'mousemove':
-            case 'touchmove':
-                gestures.drag(event);
+            //gestures.swipe(event);
 
-                break;
+            if (state.gesture == 'drag') {
+                triggerTouchEvent(state.currElement, 'dragend', event);
+            } else {
+                gestures.tap(event);
+            }
 
-            case 'mouseup':
-            case 'mouseout':
-            case 'touchcancel':
-            case 'touchend':
-                _mousdown = false;
-
-                //gestures.swipe(event);
-
-                if (_gesture == 'drag') {
-                    triggerTouchEvent(_element, 'dragend', event);
-                } else {
-                    gestures.tap(event);
-                }
-
-                reset();
-                break;
+            state.reset();
+            
+            break;
         }
-    }
+    };
 
     //needs renaming interceptEvent,touchOptions
     this.interceptEvent = {
-        bindHandler: function (element, eventType, handler) {
-            _element = element;
-            _element['on' + eventType] = handler;
+        bindHandler: function(element, eventType, handler) {
+            state.currElement = element;
+            state.currElement['on' + eventType] = handler;
 
-            if (hasTouch) {
-                _eventList = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
-            }
-                // for non-touch
-            else {
-                _eventList = ['mouseup', 'mousedown', 'mousemove', 'mouseout'];
-            }
-            
+            var events = state.eventList();
             //addEvent(element, touchstart, handleEvents);//handle events is a function that handles any event depending on event.type.
-            for (var i = 0; i < _eventList.length; i++) {
-                addEvent(_element, _eventList[i], handleEvents);
+            for (var i = 0; i < events.length; i++) {
+                addEvent(state.currElement, events[i], handleEvents);
             }
 
         }
-    }
+    };
 }(window.ko);
