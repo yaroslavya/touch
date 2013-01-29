@@ -46,31 +46,6 @@
         return this;
     }(document);
     
-    //TODOH: make it a state object.
-    var hasTouch = 'ontouchstart' in document,
-        eventList = null,
-        gesture = null,
-        _element = {},
-        mousedown = false,
-        canTap = false,
-        _pos = {},
-        _first = false,
-        fingers = 0,
-        distance = 0;
-
-    //TODOH: also part fo the state object.
-    function reset() {
-        _first = false;
-        _pos = {};
-        fingers = 0;
-        distance = 0;
-        gesture = null;
-    }
-
-    function setup() {
-        _first = true;
-    }
-
     //TODOH: Move to utils. Also any other helpers can be moved there.
     function isFunction(obj) {
         return Object.prototype.toString.call(obj) == '[object Function]';
@@ -120,7 +95,7 @@
     };
 
     //TODOH: move all the logic to event creators. So that every even creator could perform all the calculations
-    //and fill the corresponding even argument. After that event is triggered.
+    //and fill the corresponding event argument. After that event is triggered.
     this.handleEvents = function handleEvents(event) {
         //IE fix
         event = event || window.event;
