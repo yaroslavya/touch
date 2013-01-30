@@ -92,6 +92,10 @@
         }
     };
 
+    var tapEvent = function(currState, event) {
+        
+    };
+
     //TODO: move all the logic to event creators. So that every event creator could perform all the calculations
     //and fill the corresponding event argument. After that event is triggered.
     this.handleEvents = function handleEvents(event) {
