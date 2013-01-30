@@ -46,7 +46,7 @@
         return this;
     }(document);
     
-    //TODOH: Move to utils. Also any other helpers can be moved there.
+    //TODO: Move to utils. Also any other helpers can be moved there.
     function isFunction(obj) {
         return Object.prototype.toString.call(obj) == '[object Function]';
     }
@@ -94,7 +94,7 @@
         }
     };
 
-    //TODOH: move all the logic to event creators. So that every even creator could perform all the calculations
+    //TODO: move all the logic to event creators. So that every event creator could perform all the calculations
     //and fill the corresponding event argument. After that event is triggered.
     this.handleEvents = function handleEvents(event) {
         //IE fix
