@@ -26,3 +26,7 @@
         throw "browser not support trigger events";
     }
 };
+
+ko.utils.isFunction = function(obj) {
+    return Object.prototype.toString.call(obj) == '[object Function]';
+};

@@ -10,6 +10,8 @@
     var _this = this;
     'use strict';
     
+    var isFunction = ko.utils.isFunction;
+    
     var state = function (document) {
         var touchEvents = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
         var mouseEvents = ['mouseup', 'mousedown', 'mousemove', 'mouseout'];
@@ -44,19 +46,15 @@
         };
 
         return this;
-    }(document);
-    
-    //TODO: Move to utils. Also any other helpers can be moved there.
-    function isFunction(obj) {
-        return Object.prototype.toString.call(obj) == '[object Function]';
-    }
+    }(document);      
 
     //NOTE: we are checking if we should attach even via all browser attachEvent or via
-    //ie addEventListener.
+    //ie addEventListener. Maybe introducing a factory here would be better. Should try and see how
+    //code will be influenced.
     function addEvent(obj, type, fn) {
         if (obj.attachEvent) {
             obj['e' + type + fn] = fn;//adding handler to the object.
-            obj[type + fn] = function() { obj['e' + type + fn](window.event); }//making addEvent wrapper func to add to object.
+            obj[type + fn] = function() { obj['e' + type + fn](window.event); };//making addEvent wrapper func to add to object.
             obj.attachEvent('on' + type, obj[type + fn]);
         } else
             obj.addEventListener(type, fn, false);
@@ -112,7 +110,7 @@
         case 'mouseout':
         case 'touchcancel':
         case 'touchend':
-            mousedown = false;
+            state.mousedown = false;//really mousedown? what if there`s a touch event?
 
             //gestures.swipe(event);
 
