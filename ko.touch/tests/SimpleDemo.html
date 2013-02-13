@@ -2,13 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
-    <script src="../lib/knockout-2.2.0.debug.js"></script>
-  
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script src="https://raw.github.com/EightMedia/hammer.js/master/hammer.js"></script>
-  <script src="https://raw.github.com/EightMedia/hammer.js/master/jquery.hammer.js"></script>
-    
-  <script src="../src/knockout.touch.js"></script>    
+    <script src="../lib/knockout-2.2.0.debug.js"></script>     
+    <script src="../src/touch.utils.js"></script>
+    <script src="../src/knockout.touch.js"></script>
+    <script src="../src/touch.bindings.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 
     <style>
 	/* a few initial styles for our containing elements */
@@ -45,15 +43,15 @@
 <script>
 
     // assign toggle the col-anim class for each of our columns when they are clicked
-    $(function () {
+    $(function() {
         var model = {
             slide: function (ev) {
                 if (ev.direction == "down") {
-                    var target = $(ev.currentTarget);
+                    var target = $(ev.target);
                     target.addClass("col-anim");
                 }
             },
-            extract:function(ev) {
+            extract: function (ev) {
                 if (ev.direction == "up") {
                     if (ev.position.x > 26 && ev.position.x < 98) {
                         $(".col1").removeClass("col-anim");
@@ -68,8 +66,10 @@
             }
         };
 
-        ko.applyBindings(model);        
+        ko.applyBindings(model);
     });
+    
+       
 
 </script>
 

@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="../lib/knockout-2.2.0.debug.js"></script>
+    <!--TODOH: add some grunt script or something that will allow us to compile scripts every time, without including them here.-->
+    <script src="../src/touch.utils.js"></script>
+    <script src="../src/knockout.touch.js"></script>
+    <script src="../src/touch.bindings.js"></script>
+    <title>TEST</title>
+</head>
+    <body>
+        <div data-bind="drag:doCall,tap:doCall,dragstart:doCall,dragend:doCall,doubletap:doCall,swipe:doCall" style="height: 300px;width: 300px; background-color: orange;">
+        
+        </div>
+    </body>
+    <script>
+        var model = {
+            doCall: function (event) {
+                console.log(event);
+            }
+        };
+        ko.applyBindings(model);
+    </script>
+</html>
